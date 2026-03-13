@@ -770,7 +770,8 @@ async function api(method, path, body) {
     headers: { 'Content-Type': 'application/json', ...(TOKEN ? { Authorization: 'Bearer '+TOKEN } : {}) },
   };
   if (body) opts.body = JSON.stringify(body);
-  const res = await fetch('/api' + path, opts);
+  const RENDER_URL = 'https://finvault-eetk.onrender.com';
+  const res = await fetch(RENDER_URL + '/api' + path, opts);
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Request failed');
   return data;

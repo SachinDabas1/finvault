@@ -1449,18 +1449,19 @@ document.getElementById('l-pass').addEventListener('keydown', e => { if(e.key===
 // Auto-restore session if token exists
 (async function autoLogin() {
   if (!TOKEN) return;
+  // Decode user from token first (works offline)
   try {
-    // Validate token by fetching transactions — if 401, token is expired
-    const txns = await api('GET','/transactions');
-    // Token is valid — decode user from it
     const payload = JSON.parse(atob(TOKEN.split('.')[1]));
+    // Check token not expired
+    if (payload.exp && payload.exp * 1000 < Date.now()) {
+      TOKEN = null; localStorage.removeItem('fv_token'); return;
+    }
     CU = { username: payload.username, name: payload.name, role: payload.role };
-    CACHE.transactions = txns;
-    bootApp();
   } catch {
-    // Token expired or invalid — show login
-    TOKEN = null; localStorage.removeItem('fv_token');
+    TOKEN = null; localStorage.removeItem('fv_token'); return;
   }
+  // Boot app immediately, loadAll will fetch data (with Render wakeup tolerance)
+  bootApp();
 })();
 </script>
 </body>

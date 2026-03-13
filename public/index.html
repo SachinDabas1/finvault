@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#e8f0ff">
+<title>FINVAULT — Personal Finance Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   LIGHT GLASS FOUNDATIONS
+═══════════════════════════════════════ */
+:root {
+  /* Vivid accent palette — bright, saturated */
+  --blue:    #2563ff;
+  --violet:  #7c3aff;
+  --pink:    #f0187a;
+  --teal:    #00c2a8;
+  --amber:   #f59e0b;
+  --red:     #ef3f3f;
+  --emerald: #10b981;
+
+  /* Text */
+  --ink:     #0f172a;
+  --ink2:    #334155;
+  --ink3:    #64748b;
+  --ink4:    #94a3b8;
+
+  /* Glass system */
+  --glass-white:  rgba(255,255,255,0.62);
+  --glass-white2: rgba(255,255,255,0.38);
+  --glass-white3: rgba(255,255,255,0.22);
+  --glass-border: rgba(255,255,255,0.75);
+  --glass-border2:rgba(255,255,255,0.45);
+  --glass-shadow: 0 8px 32px rgba(99,120,200,0.18), 0 2px 8px rgba(99,120,200,0.1);
+  --glass-shadow-hover: 0 16px 48px rgba(99,120,200,0.26), 0 4px 16px rgba(99,120,200,0.14);
+
+  --blur:  blur(28px) saturate(200%) brightness(1.05);
+  --blur2: blur(20px) saturate(180%);
+  --r: 18px;
+  --r2: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #dce8ff;
+  color: var(--ink);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════
+   CINEMATIC LIGHT BACKGROUND
+═══════════════════════════════════════ */
+#bg {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 75% 60% at 10% 5%,   rgba(255,255,255,0.95) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 0%,    rgba(200,220,255,0.8)  0%, transparent 55%),
+    radial-gradient(ellipse 80% 40% at 50% 100%,  rgba(180,210,255,0.7)  0%, transparent 60%),
+    radial-gradient(ellipse 50% 60% at 80% 60%,   rgba(220,200,255,0.5)  0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 20% 70%,   rgba(180,240,230,0.4)  0%, transparent 55%),
+    linear-gradient(145deg, #e8f2ff 0%, #dce8ff 40%, #ede4ff 70%, #e0f2ff 100%);
+  animation: bgDrift 20s ease-in-out infinite alternate;
+}
+@keyframes bgDrift {
+  0%   { background-position: 0% 0%; }
+  100% { background-position: 2% 3%; }
+}
+
+/* Light orbs */
+#orbs { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(70px); opacity: 0.35;
+  animation: orbFloat linear infinite;
+}
+.orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(100,150,255,0.5), transparent); top: -100px; left: -100px; animation-duration: 18s; }
+.orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(180,100,255,0.4), transparent); top: 30%; right: -80px; animation-duration: 22s; animation-direction: reverse; }
+.orb3 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(0,200,180,0.35), transparent); bottom: -80px; left: 30%; animation-duration: 25s; }
+.orb4 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(240,80,140,0.3), transparent); bottom: 10%; right: 15%; animation-duration: 20s; animation-direction: reverse; }
+@keyframes orbFloat {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(30px,-20px) scale(1.05); }
+  66%     { transform: translate(-20px,15px) scale(0.95); }
+}
+
+/* Glass shimmer refraction layer */
+#refraction {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+  background:
+    repeating-linear-gradient(
+      105deg,
+      transparent 0px,
+      transparent 60px,
+      rgba(255,255,255,0.06) 60px,
+      rgba(255,255,255,0.06) 61px
+    );
+}
+
+/* Particles */
+#particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+/* Noise */
+#noise {
+  position: fixed; inset: 0; z-index: 0; opacity: 0.025; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ═══════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════ */
+#app { position: relative; z-index: 1; min-height: 100vh; }
+
+/* ═══════════════════════════════════════
+   GLASS PANEL
+═══════════════════════════════════════ */
+.panel {
+  background: var(--glass-white);
+  backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--r);
+  box-shadow: var(--glass-shadow);
+  position: relative; overflow: hidden;
+}
+
+/* Inner glass highlight — top reflection streak */
+.panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.9) 20%,
+    rgba(255,255,255,1) 50%,
+    rgba(255,255,255,0.9) 80%,
+    transparent 100%);
+  z-index: 1;
+}
+
+/* Inner sheen — diagonal light refraction */
+.panel::after {
+  content: '';
+  position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.18) 50%, transparent 100%);
+  pointer-events: none; z-index: 1;
+  animation: sheenSlide 6s ease-in-out infinite;
+}
+@keyframes sheenSlide {
+  0%,100% { left: -60%; opacity: 0.6; }
+  50%     { left: 120%; opacity: 1; }
+}
+
+/* Panel accent bar variants */
+.panel .accent-top {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px; z-index: 2;
+  border-radius: var(--r) var(--r) 0 0;
+}
+.accent-blue   { background: linear-gradient(90deg, var(--blue), var(--violet)); }
+.accent-green  { background: linear-gradient(90deg, var(--teal), var(--emerald)); }
+.accent-pink   { background: linear-gradient(90deg, var(--pink), var(--violet)); }
+.accent-amber  { background: linear-gradient(90deg, var(--amber), #f97316); }
+.accent-red    { background: linear-gradient(90deg, var(--red), var(--pink)); }
+
+/* ═══════════════════════════════════════
+   AUTH SCREEN
+═══════════════════════════════════════ */
+#auth-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.auth-wrap {
+  width: 100%; max-width: 420px;
+  animation: bootUp 0.8s cubic-bezier(0.22,1,0.36,1) both;
+}
+@keyframes bootUp {
+  from { opacity: 0; transform: scale(0.9) translateY(24px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+.auth-header { text-align: center; margin-bottom: 32px; }
+
+.logo-ring {
+  width: 76px; height: 76px; margin: 0 auto 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(220,234,255,0.7));
+  border: 1.5px solid rgba(255,255,255,0.9);
+  box-shadow: 0 8px 32px rgba(37,99,255,0.2), 0 2px 8px rgba(37,99,255,0.1), inset 0 1px 0 rgba(255,255,255,1);
+  display: flex; align-items: center; justify-content: center;
+  animation: logoBreath 4s ease-in-out infinite;
+}
+@keyframes logoBreath {
+  0%,100% { box-shadow: 0 8px 32px rgba(37,99,255,0.2), 0 2px 8px rgba(37,99,255,0.1), inset 0 1px 0 rgba(255,255,255,1); }
+  50%     { box-shadow: 0 12px 48px rgba(124,58,255,0.28), 0 4px 16px rgba(124,58,255,0.15), inset 0 1px 0 rgba(255,255,255,1); }
+}
+.logo-ring svg { width: 34px; height: 34px; }
+
+.auth-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 10vw, 4rem); letter-spacing: 0.1em;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--violet) 50%, var(--pink) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  background-size: 200% auto; animation: shimmerText 5s linear infinite; line-height: 1;
+  filter: drop-shadow(0 2px 8px rgba(37,99,255,0.2));
+}
+@keyframes shimmerText { from { background-position: 0% center; } to { background-position: 200% center; } }
+
+.auth-sub {
+  font-family: 'Rajdhani'; font-size: 0.8rem; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--ink3); margin-top: 6px; font-weight: 500;
+}
+
+.auth-card { padding: 36px 32px; }
+@media(max-width:480px) { .auth-card { padding: 28px 20px; } }
+
+/* ═══════════════════════════════════════
+   FORM FIELDS
+═══════════════════════════════════════ */
+.field { margin-bottom: 16px; }
+.field label {
+  display: block; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 7px; font-weight: 600; font-family: 'Rajdhani';
+}
+.field input, .field select, .field textarea {
+  width: 100%; padding: 12px 15px;
+  background: rgba(255,255,255,0.65);
+  border: 1px solid rgba(255,255,255,0.8);
+  border-radius: var(--r2); color: var(--ink);
+  font-family: 'DM Sans'; font-size: 0.88rem; font-weight: 400;
+  outline: none; transition: all 0.2s;
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(99,120,200,0.08), inset 0 1px 0 rgba(255,255,255,0.9);
+  -webkit-appearance: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: rgba(37,99,255,0.4);
+  background: rgba(255,255,255,0.85);
+  box-shadow: 0 0 0 3px rgba(37,99,255,0.12), 0 2px 8px rgba(99,120,200,0.1), inset 0 1px 0 rgba(255,255,255,1);
+}
+.field input::placeholder { color: var(--ink4); }
+.field select option { background: #fff; color: var(--ink); }
+.field textarea { resize: vertical; min-height: 78px; }
+
+/* ═══════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 12px 24px; border-radius: var(--r2); border: none; cursor: pointer;
+  font-family: 'Rajdhani'; font-weight: 700; font-size: 0.82rem;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  transition: all 0.18s; white-space: nowrap;
+}
+.btn:active { transform: scale(0.97); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  color: #fff; width: 100%;
+  box-shadow: 0 4px 20px rgba(37,99,255,0.35), 0 1px 4px rgba(37,99,255,0.2),
+              inset 0 1px 0 rgba(255,255,255,0.25);
+}
+.btn-primary:hover {
+  box-shadow: 0 8px 32px rgba(37,99,255,0.45), 0 2px 8px rgba(37,99,255,0.25);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: rgba(255,255,255,0.6); color: var(--ink2);
+  border: 1px solid rgba(255,255,255,0.8);
+  box-shadow: 0 2px 8px rgba(99,120,200,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.85); color: var(--ink); }
+
+.btn-mag {
+  background: rgba(255,255,255,0.6); color: var(--pink);
+  border: 1px solid rgba(240,24,122,0.2);
+  box-shadow: 0 2px 8px rgba(240,24,122,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.btn-mag:hover { background: rgba(255,235,245,0.8); box-shadow: 0 4px 16px rgba(240,24,122,0.2); }
+
+.btn-green {
+  background: rgba(255,255,255,0.6); color: var(--emerald);
+  border: 1px solid rgba(16,185,129,0.25);
+  box-shadow: 0 2px 8px rgba(16,185,129,0.1), inset 0 1px 0 rgba(255,255,255,0.9);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.btn-green:hover { background: rgba(236,253,245,0.8); box-shadow: 0 4px 16px rgba(16,185,129,0.2); }
+
+.btn-sm { padding: 8px 16px; font-size: 0.75rem; }
+.btn-xs { padding: 5px 11px; font-size: 0.68rem; }
+
+.error-msg { color: var(--red); font-size: 0.78rem; margin-bottom: 12px; font-family: 'Rajdhani'; font-weight: 600; }
+.auth-toggle { margin-top: 16px; text-align: center; font-size: 0.8rem; color: var(--ink3); font-family: 'Rajdhani'; font-weight: 500; }
+.auth-toggle a { color: var(--blue); cursor: pointer; text-decoration: none; font-weight: 600; }
+.auth-toggle a:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════
+   MAIN APP
+═══════════════════════════════════════ */
+#main-app { display: none; flex-direction: column; min-height: 100vh; }
+
+/* NAV */
+.topnav {
+  position: sticky; top: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 62px;
+  background: rgba(255,255,255,0.72);
+  backdrop-filter: blur(32px) saturate(200%); -webkit-backdrop-filter: blur(32px) saturate(200%);
+  border-bottom: 1px solid rgba(255,255,255,0.8);
+  box-shadow: 0 2px 24px rgba(99,120,200,0.12), inset 0 -1px 0 rgba(255,255,255,0.6);
+}
+
+.nav-brand {
+  font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 0.12em;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  filter: drop-shadow(0 1px 4px rgba(37,99,255,0.2));
+}
+.nav-right { display: flex; align-items: center; gap: 12px; }
+
+.nav-tabs { display: flex; gap: 0; }
+.ntab {
+  padding: 0 16px; height: 62px; display: flex; align-items: center;
+  font-family: 'Rajdhani'; font-weight: 600; font-size: 0.76rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3);
+  border: none; background: transparent; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.18s;
+  white-space: nowrap;
+}
+.ntab:hover { color: var(--ink); }
+.ntab.active { color: var(--blue); border-bottom-color: var(--blue); }
+
+.mobile-tabs {
+  display: none; overflow-x: auto;
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.7);
+  scrollbar-width: none;
+}
+.mobile-tabs::-webkit-scrollbar { display: none; }
+@media(max-width:860px) {
+  .nav-tabs { display: none; }
+  .mobile-tabs { display: flex; }
+  .mtab {
+    padding: 12px 16px; flex-shrink: 0;
+    font-family: 'Rajdhani'; font-weight: 600; font-size: 0.74rem;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink3);
+    border: none; background: transparent; cursor: pointer;
+    border-bottom: 2px solid transparent; transition: all 0.18s;
+  }
+  .mtab.active { color: var(--blue); border-bottom-color: var(--blue); }
+}
+
+.nav-user { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 2px 12px rgba(37,99,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue'; font-size: 0.95rem; color: #fff;
+}
+.nav-username { font-family: 'DM Sans'; font-size: 0.82rem; color: var(--ink2); font-weight: 500; }
+@media(max-width:600px) { .nav-username { display: none; } }
+.admin-chip {
+  font-family: 'Rajdhani'; font-size: 0.6rem; letter-spacing: 0.1em; font-weight: 700;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(245,158,11,0.15), rgba(251,191,36,0.12));
+  color: #b45309; border: 1px solid rgba(245,158,11,0.3);
+}
+
+/* MAIN CONTENT */
+.main-content { flex: 1; padding: 24px; max-width: 1400px; margin: 0 auto; width: 100%; }
+@media(max-width:640px) { .main-content { padding: 16px; } }
+
+/* TAB PANELS */
+.tab-panel { display: none; animation: panelIn 0.3s ease; }
+.tab-panel.active { display: block; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+/* ═══════════════════════════════════════
+   STAT CARDS
+═══════════════════════════════════════ */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+
+.stat-card {
+  padding: 22px 20px; cursor: default;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--glass-shadow-hover);
+}
+
+/* Colored stripe on left edge */
+.stat-card .stripe {
+  position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 2px;
+}
+
+.stat-label {
+  font-family: 'Rajdhani'; font-size: 0.64rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink3); margin-bottom: 10px; font-weight: 600;
+}
+.stat-val {
+  font-family: 'Bebas Neue';
+  font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+  letter-spacing: 0.02em; line-height: 1;
+}
+.c-blue    { color: var(--blue); }
+.c-violet  { color: var(--violet); }
+.c-pink    { color: var(--pink); }
+.c-teal    { color: var(--teal); }
+.c-amber   { color: #d97706; }
+.c-red     { color: var(--red); }
+.c-emerald { color: var(--emerald); }
+.stat-sub { font-size: 0.72rem; color: var(--ink4); margin-top: 8px; font-family: 'Rajdhani'; font-weight: 500; }
+
+/* ═══════════════════════════════════════
+   SECTION HEADER
+═══════════════════════════════════════ */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+.section-title {
+  font-family: 'Bebas Neue'; font-size: 1.3rem; letter-spacing: 0.08em;
+  color: var(--ink); display: flex; align-items: center; gap: 10px;
+}
+.title-bar {
+  width: 4px; height: 22px; border-radius: 2px;
+  background: linear-gradient(180deg, var(--blue), var(--violet));
+}
+
+/* ═══════════════════════════════════════
+   TABLES
+═══════════════════════════════════════ */
+.table-wrap { overflow-x: auto; border-radius: var(--r); }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+thead th {
+  padding: 12px 16px; text-align: left; white-space: nowrap;
+  font-family: 'Rajdhani'; font-size: 0.62rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink3); font-weight: 600;
+  border-bottom: 1px solid rgba(99,120,200,0.12);
+  background: rgba(255,255,255,0.45);
+}
+tbody tr { border-bottom: 1px solid rgba(99,120,200,0.07); transition: background 0.15s; }
+tbody tr:hover { background: rgba(255,255,255,0.5); }
+tbody td { padding: 13px 16px; vertical-align: middle; color: var(--ink2); }
+@media(max-width:640px) { tbody td { padding: 10px; } thead th { padding: 10px; } }
+
+/* Badges */
+.badge {
+  display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px;
+  font-family: 'Rajdhani'; font-size: 0.64rem; letter-spacing: 0.08em;
+  text-transform: uppercase; font-weight: 700;
+}
+.b-blue   { background: rgba(37,99,255,0.1);   color: var(--blue);    border: 1px solid rgba(37,99,255,0.2); }
+.b-cyan   { background: rgba(37,99,255,0.1);   color: var(--blue);    border: 1px solid rgba(37,99,255,0.2); }
+.b-mag    { background: rgba(240,24,122,0.1);  color: var(--pink);    border: 1px solid rgba(240,24,122,0.2); }
+.b-green  { background: rgba(16,185,129,0.1);  color: var(--emerald); border: 1px solid rgba(16,185,129,0.2); }
+.b-yellow { background: rgba(245,158,11,0.12); color: #b45309;        border: 1px solid rgba(245,158,11,0.25); }
+.b-orange { background: rgba(249,115,22,0.1);  color: #c2410c;        border: 1px solid rgba(249,115,22,0.2); }
+
+/* Amount colors */
+.a-pos { color: var(--emerald); font-variant-numeric: tabular-nums; font-weight: 600; }
+.a-neg { color: var(--red);     font-variant-numeric: tabular-nums; font-weight: 600; }
+.a-neu { color: var(--blue);    font-variant-numeric: tabular-nums; font-weight: 600; }
+.a-yel { color: #d97706;        font-variant-numeric: tabular-nums; font-weight: 600; }
+.a-mag { color: var(--pink);    font-variant-numeric: tabular-nums; font-weight: 600; }
+.muted { color: var(--ink4); font-size: 0.76rem; }
+
+/* ═══════════════════════════════════════
+   MODAL
+═══════════════════════════════════════ */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(180,200,240,0.35);
+  backdrop-filter: blur(16px) saturate(180%); -webkit-backdrop-filter: blur(16px) saturate(180%);
+  display: none; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  width: 100%; max-width: 540px; padding: 36px 32px; position: relative;
+  animation: modalPop 0.28s cubic-bezier(0.34,1.56,0.64,1);
+}
+@media(max-width:600px) { .modal { padding: 28px 18px; } }
+@keyframes modalPop {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); filter: blur(4px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+.modal-close {
+  position: absolute; top: 14px; right: 14px;
+  width: 30px; height: 30px; border-radius: 8px;
+  border: 1px solid rgba(99,120,200,0.2);
+  background: rgba(255,255,255,0.7); color: var(--ink3); cursor: pointer; font-size: 1rem;
+  display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+}
+.modal-close:hover { background: rgba(240,24,122,0.1); color: var(--pink); border-color: rgba(240,24,122,0.3); }
+.modal-title {
+  font-family: 'Bebas Neue'; font-size: 1.5rem; letter-spacing: 0.06em;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 22px;
+}
+.modal-actions { display: flex; gap: 12px; margin-top: 22px; }
+.modal-actions .btn { flex: 1; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media(max-width:500px) { .two-col { grid-template-columns: 1fr; } }
+
+/* ═══════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════ */
+.empty { text-align: center; padding: 60px 20px; }
+.empty-icon { font-size: 2.5rem; margin-bottom: 14px; opacity: 0.4; }
+.empty p { font-family: 'Rajdhani'; font-size: 0.9rem; letter-spacing: 0.12em; color: var(--ink3); text-transform: uppercase; font-weight: 500; }
+
+/* ═══════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════ */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+@media(max-width:768px) { .dash-grid { grid-template-columns: 1fr; } }
+
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid rgba(99,120,200,0.08);
+  font-size: 0.82rem;
+}
+.info-row:last-child { border: none; }
+.info-key { color: var(--ink3); font-family: 'Rajdhani'; font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+.divider { height: 1px; background: rgba(99,120,200,0.1); margin: 14px 0; }
+
+/* ═══════════════════════════════════════
+   TICKER
+═══════════════════════════════════════ */
+.ticker-wrap {
+  overflow: hidden; height: 32px;
+  background: rgba(255,255,255,0.55);
+  border-bottom: 1px solid rgba(255,255,255,0.75);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9);
+  display: flex; align-items: center;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+}
+.ticker-inner {
+  display: flex; gap: 60px; white-space: nowrap;
+  animation: ticker 25s linear infinite;
+  font-family: 'Rajdhani'; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+}
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.tick-item { color: var(--ink3); font-weight: 500; }
+.tick-item span { color: var(--blue); font-weight: 700; margin-left: 4px; }
+
+/* ═══════════════════════════════════════
+   TOAST
+═══════════════════════════════════════ */
+#toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  padding: 14px 20px; border-radius: 14px;
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(255,255,255,0.9);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px rgba(99,120,200,0.2), inset 0 1px 0 rgba(255,255,255,1);
+  font-family: 'Rajdhani'; font-size: 0.88rem; font-weight: 700;
+  letter-spacing: 0.06em; color: var(--blue);
+  transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  pointer-events: none; max-width: 260px;
+}
+#toast.show { transform: none; opacity: 1; }
+#toast.err  { color: var(--red);     border-color: rgba(239,63,63,0.3); box-shadow: 0 8px 32px rgba(239,63,63,0.15), inset 0 1px 0 rgba(255,255,255,1); }
+#toast.ok   { color: var(--emerald); border-color: rgba(16,185,129,0.3); box-shadow: 0 8px 32px rgba(16,185,129,0.15), inset 0 1px 0 rgba(255,255,255,1); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(99,120,200,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99,120,200,0.35); }
+</style>
+</head>
+<body>
+
+<!-- LOADING BAR -->
+<div id="loading-bar" style="position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,#2563ff,#7c3aff);z-index:9999;transition:width 0.4s ease;"></div>
+
+<!-- BACKGROUND LAYERS -->
+<div id="bg"></div>
+<div id="orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="orb orb4"></div>
+</div>
+<div id="refraction"></div>
+<canvas id="particles"></canvas>
+<div id="noise"></div>
+<div id="toast"></div>
+
+<div id="app">
+
+  <!-- ╔══════════════════════════════╗
+       ║      AUTH SCREEN             ║
+       ╚══════════════════════════════╝ -->
+  <div id="auth-screen">
+    <div class="auth-wrap">
+      <div class="auth-header">
+        <div class="logo-ring">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18 4L32 12V24L18 32L4 24V12L18 4Z" stroke="#2563ff" stroke-width="1.5" fill="none" opacity="0.8"/>
+            <path d="M18 10L26 15V25L18 30L10 25V15L18 10Z" stroke="#7c3aff" stroke-width="1" fill="none" opacity="0.6"/>
+            <circle cx="18" cy="18" r="3" fill="#2563ff" opacity="0.9"/>
+          </svg>
+        </div>
+        <h1 class="auth-title">FINVAULT</h1>
+        <p class="auth-sub">PERSONAL FINANCE LEDGER</p>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="login-view" class="panel auth-card">
+        <div class="field">
+          <label>// Username</label>
+          <input type="text" id="l-user" placeholder="enter_username" autocomplete="username">
+        </div>
+        <div class="field">
+          <label>// Password</label>
+          <input type="password" id="l-pass" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div id="l-err" class="error-msg" style="display:none"></div>
+        <button class="btn btn-primary" onclick="doLogin()">[ AUTHENTICATE ]</button>
+        <p class="auth-toggle">New user? <a onclick="contactAdmin()">Contact your admin</a></p>
+      </div>
+
+      <!-- ADMIN REGISTER (only shown when admin creates user from app) -->
+      <div id="reg-view" class="panel auth-card" style="display:none">
+        <div class="two-col">
+          <div class="field"><label>// Username</label><input type="text" id="r-user" placeholder="username"></div>
+          <div class="field"><label>// Full Name</label><input type="text" id="r-name" placeholder="Name"></div>
+        </div>
+        <div class="field"><label>// Password</label><input type="password" id="r-pass" placeholder="Password"></div>
+        <div class="field">
+          <label>// Role</label>
+          <select id="r-role"><option value="user">User</option><option value="admin">Admin</option></select>
+        </div>
+        <div id="r-err" class="error-msg" style="display:none"></div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="showLoginView()">Cancel</button>
+          <button class="btn btn-primary" onclick="doRegister()">[ CREATE ]</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ╔══════════════════════════════╗
+       ║       MAIN APPLICATION       ║
+       ╚══════════════════════════════╝ -->
+  <div id="main-app">
+
+    <!-- Ticker bar -->
+    <div class="ticker-wrap" id="ticker-wrap">
+      <div class="ticker-inner" id="ticker-inner">
+        <span class="tick-item">NET BALANCE <span id="t-net">₹0</span></span>
+        <span class="tick-item">INCOME <span id="t-inc">₹0</span></span>
+        <span class="tick-item">EXPENSES <span id="t-exp">₹0</span></span>
+        <span class="tick-item">LOANS OUT <span id="t-loan">₹0</span></span>
+        <span class="tick-item">BANK DEBT <span id="t-debt">₹0</span></span>
+        <span class="tick-item">INTEREST PAID <span id="t-int">₹0</span></span>
+        <!-- duplicate for seamless loop -->
+        <span class="tick-item">NET BALANCE <span id="t-net2">₹0</span></span>
+        <span class="tick-item">INCOME <span id="t-inc2">₹0</span></span>
+        <span class="tick-item">EXPENSES <span id="t-exp2">₹0</span></span>
+        <span class="tick-item">LOANS OUT <span id="t-loan2">₹0</span></span>
+        <span class="tick-item">BANK DEBT <span id="t-debt2">₹0</span></span>
+        <span class="tick-item">INTEREST PAID <span id="t-int2">₹0</span></span>
+      </div>
+    </div>
+
+    <!-- Top nav -->
+    <nav class="topnav">
+      <div class="nav-brand">FINVAULT</div>
+      <div class="nav-tabs" id="nav-tabs"></div>
+      <div class="nav-right">
+        <div class="nav-user">
+          <div class="avatar" id="nav-avatar"></div>
+          <span class="nav-username" id="nav-uname"></span>
+          <span class="admin-chip" id="nav-role-chip" style="display:none">ADMIN</span>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="doLogout()">EXIT</button>
+      </div>
+    </nav>
+
+    <!-- Mobile tabs -->
+    <div class="mobile-tabs" id="mobile-tabs"></div>
+
+    <!-- Content -->
+    <div class="main-content">
+      <div id="tab-panels">
+        <div class="tab-panel" id="panel-dashboard"></div>
+        <div class="tab-panel" id="panel-income"></div>
+        <div class="tab-panel" id="panel-expenses"></div>
+        <div class="tab-panel" id="panel-loans-given"></div>
+        <div class="tab-panel" id="panel-bank-loans"></div>
+        <div class="tab-panel" id="panel-interest"></div>
+        <div class="tab-panel" id="panel-users"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalBg(event)">
+  <div class="modal panel" id="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════
+   PARTICLE SYSTEM
+═══════════════════════════════════════════════ */
+(function(){
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const COLORS = ['rgba(37,99,255,', 'rgba(124,58,255,', 'rgba(0,194,168,', 'rgba(240,24,122,'];
+
+  function mkParticle() {
+    const c = COLORS[Math.floor(Math.random()*COLORS.length)];
+    return {
+      x: Math.random()*W, y: Math.random()*H,
+      vx: (Math.random()-0.5)*0.4, vy: -Math.random()*0.6-0.2,
+      size: Math.random()*2+0.5,
+      alpha: Math.random()*0.3+0.05,
+      color: c, life: 1,
+      decay: Math.random()*0.003+0.001
+    };
+  }
+
+  for (let i=0; i<80; i++) particles.push(mkParticle());
+
+  function draw() {
+    ctx.clearRect(0,0,W,H);
+    particles.forEach((p,i) => {
+      p.x += p.vx; p.y += p.vy; p.life -= p.decay;
+      if (p.life <= 0 || p.y < -10) particles[i] = mkParticle();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+      ctx.fillStyle = p.color + (p.alpha*p.life) + ')';
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ═══════════════════════════════════════════════
+   API LAYER — MongoDB Atlas backend
+═══════════════════════════════════════════════ */
+let TOKEN = localStorage.getItem('fv_token') || null;
+
+async function api(method, path, body) {
+  const opts = {
+    method,
+    headers: { 'Content-Type': 'application/json', ...(TOKEN ? { Authorization: 'Bearer '+TOKEN } : {}) },
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch('/api' + path, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+// In-memory cache so renders are instant
+const CACHE = { transactions:[], loans_given:[], bank_loans:[], interest_payments:[], users:[] };
+
+async function loadAll() {
+  setLoading(true);
+  try {
+    const [txns, loans, banks, ints] = await Promise.all([
+      api('GET','/transactions'),
+      api('GET','/loans-given'),
+      api('GET','/bank-loans'),
+      api('GET','/interest-payments'),
+    ]);
+    CACHE.transactions        = txns;
+    CACHE.loans_given         = loans;
+    CACHE.bank_loans          = banks;
+    CACHE.interest_payments   = ints;
+    if (CU.role === 'admin') CACHE.users = await api('GET','/users');
+    updateTicker();
+  } catch(e) { toast('SYNC ERROR: '+e.message,'err'); }
+  finally { setLoading(false); }
+}
+
+function setLoading(on) {
+  const el = document.getElementById('loading-bar');
+  if (el) el.style.width = on ? '100%' : '0%';
+}
+
+/* ═══════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════ */
+let CU = null;
+
+async function doLogin() {
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  if (!u || !p) { show('l-err','Enter username and password'); return; }
+  const btn = document.querySelector('#login-view .btn-primary');
+  btn.textContent = '[ CONNECTING... ]'; btn.disabled = true;
+  try {
+    const data = await api('POST', '/auth/login', { username: u, password: p });
+    TOKEN = data.token;
+    localStorage.setItem('fv_token', TOKEN);
+    CU = data.user;
+    hide('l-err');
+    bootApp();
+  } catch(e) {
+    show('l-err', 'ACCESS DENIED — ' + e.message);
+  } finally {
+    btn.textContent = '[ AUTHENTICATE ]'; btn.disabled = false;
+  }
+}
+
+function doLogout() {
+  CU = null; TOKEN = null;
+  localStorage.removeItem('fv_token');
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+}
+
+async function doRegister() {
+  const u = document.getElementById('r-user').value.trim();
+  const n = document.getElementById('r-name').value.trim();
+  const p = document.getElementById('r-pass').value;
+  const r = document.getElementById('r-role').value;
+  if (!u||!n||!p) { show('r-err','All fields required'); return; }
+  try {
+    await api('POST','/users',{username:u,password:p,name:n,role:r});
+    hide('r-err'); toast('User created','ok'); showLoginView();
+  } catch(e) { show('r-err', e.message); }
+}
+
+function contactAdmin() { toast('ONLY ADMINS CAN REGISTER USERS','err'); }
+function showLoginView() {
+  document.getElementById('login-view').style.display='block';
+  document.getElementById('reg-view').style.display='none';
+}
+
+/* ═══════════════════════════════════════════════
+   APP BOOT
+═══════════════════════════════════════════════ */
+const TABS = [
+  {id:'dashboard',  label:'DASHBOARD'},
+  {id:'income',     label:'INCOME'},
+  {id:'expenses',   label:'EXPENSES'},
+  {id:'loans-given',label:'LOANS GIVEN'},
+  {id:'bank-loans', label:'BANK LOANS'},
+  {id:'interest',   label:'INTEREST'},
+];
+
+async function bootApp() {
+  document.getElementById('auth-screen').style.display='none';
+  const app = document.getElementById('main-app');
+  app.style.display='flex'; app.style.flexDirection='column';
+
+  document.getElementById('nav-avatar').textContent = CU.name[0].toUpperCase();
+  document.getElementById('nav-uname').textContent = CU.name;
+  document.getElementById('nav-role-chip').style.display = CU.role==='admin'?'inline':'none';
+
+  const allTabs = CU.role==='admin' ? [...TABS,{id:'users',label:'USERS'}] : TABS;
+  const navTabs = document.getElementById('nav-tabs');
+  const mobTabs = document.getElementById('mobile-tabs');
+  navTabs.innerHTML = allTabs.map(t=>`<button class="ntab" data-id="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('');
+  mobTabs.innerHTML = allTabs.map(t=>`<button class="mtab" data-id="${t.id}" onclick="switchTab('${t.id}')">${t.label}</button>`).join('');
+
+  await loadAll();
+  switchTab('dashboard');
+}
+
+let AT = '';
+function switchTab(id) {
+  AT = id;
+  document.querySelectorAll('.ntab,.mtab').forEach(b => b.classList.toggle('active', b.dataset.id===id));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id==='panel-'+id));
+  ({
+    'dashboard':   renderDashboard,
+    'income':      renderIncome,
+    'expenses':    renderExpenses,
+    'loans-given': renderLoansGiven,
+    'bank-loans':  renderBankLoans,
+    'interest':    renderInterest,
+    'users':       renderUsers,
+  }[id] || (()=>{}))();
+}
+
+function updateTicker() {
+  const txns = CACHE.transactions;
+  const loans = CACHE.loans_given;
+  const banks = CACHE.bank_loans;
+  const ints  = CACHE.interest_payments;
+  const inc  = txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp  = txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const net  = inc-exp;
+  const lout = loans.filter(l=>!l.returned).reduce((s,l)=>s+l.amount,0);
+  const debt = banks.filter(l=>l.active).reduce((s,l)=>s+l.principal,0);
+  const intP = ints.reduce((s,p)=>s+p.amount,0);
+  ['net','inc','exp','loan','debt','int'].forEach((k,i)=>{
+    const val=[net,inc,exp,lout,debt,intP][i];
+    ['t-'+k,'t-'+k+'2'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=fmt(val); });
+  });
+}
+
+/* ═══════════════════════════════════════════════
+   DASHBOARD
+═══════════════════════════════════════════════ */
+function renderDashboard() {
+  const txns  = CACHE.transactions;
+  const loans = CACHE.loans_given;
+  const banks = CACHE.bank_loans;
+  const ints  = CACHE.interest_payments;
+
+  const inc  = txns.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+  const exp  = txns.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+  const net  = inc-exp;
+  const lout = loans.filter(l=>!l.returned).reduce((s,l)=>s+l.amount,0);
+  const lrec = loans.filter(l=>l.returned).reduce((s,l)=>s+l.amount,0);
+  const debt = banks.filter(b=>b.active).reduce((s,b)=>s+b.principal,0);
+  const intP = ints.reduce((s,p)=>s+p.amount,0);
+
+  const recent = [...txns].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
+  const pending = loans.filter(l=>!l.returned).slice(0,5);
+
+  document.getElementById('panel-dashboard').innerHTML = `
+    <div class="stats-grid">
+      <div class="panel stat-card">
+        <div class="stripe accent-green" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,#10b981,#00c2a8)"></div>
+        <div class="stat-label">TOTAL INCOME</div>
+        <div class="stat-val c-emerald">${fmt(inc)}</div>
+        <div class="stat-sub">${txns.filter(t=>t.type==='income').length} transactions</div>
+      </div>
+      <div class="panel stat-card">
+        <div class="stripe" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,var(--red),var(--pink))"></div>
+        <div class="stat-label">TOTAL EXPENSES</div>
+        <div class="stat-val c-red">${fmt(exp)}</div>
+        <div class="stat-sub">${txns.filter(t=>t.type==='expense').length} transactions</div>
+      </div>
+      <div class="panel stat-card">
+        <div class="stripe" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,var(--blue),var(--violet))"></div>
+        <div class="stat-label">NET BALANCE</div>
+        <div class="stat-val ${net>=0?'c-blue':'c-red'}">${fmt(net)}</div>
+        <div class="stat-sub">income minus expenses</div>
+      </div>
+      <div class="panel stat-card">
+        <div class="stripe" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,#f59e0b,#f97316)"></div>
+        <div class="stat-label">LOANS OUTSTANDING</div>
+        <div class="stat-val c-amber">${fmt(lout)}</div>
+        <div class="stat-sub">${loans.filter(l=>!l.returned).length} pending · ${fmt(lrec)} recovered</div>
+      </div>
+      <div class="panel stat-card">
+        <div class="stripe" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,var(--pink),var(--violet))"></div>
+        <div class="stat-label">BANK DEBT</div>
+        <div class="stat-val c-pink">${fmt(debt)}</div>
+        <div class="stat-sub">${banks.filter(b=>b.active).length} active loans</div>
+      </div>
+      <div class="panel stat-card">
+        <div class="stripe" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,var(--violet),var(--blue))"></div>
+        <div class="stat-label">INTEREST PAID</div>
+        <div class="stat-val c-violet">${fmt(intP)}</div>
+        <div class="stat-sub">${ints.length} payments made</div>
+      </div>
+    </div>
+
+    <div class="dash-grid">
+      <div>
+        <div class="section-header">
+          <div class="section-title"><div class="title-bar"></div>RECENT TRANSACTIONS</div>
+        </div>
+        <div class="panel table-wrap">
+          ${recent.length ? `<table><thead><tr><th>Date</th><th>Description</th><th>Amount</th><th>Type</th></tr></thead><tbody>
+            ${recent.map(t=>`<tr>
+              <td class="muted">${t.date}</td>
+              <td>${t.description}</td>
+              <td class="${t.type==='income'?'a-pos':'a-neg'}">${t.type==='income'?'+':'-'}${fmt(t.amount)}</td>
+              <td><span class="badge ${t.type==='income'?'b-green':'b-mag'}">${t.type}</span></td>
+            </tr>`).join('')}
+          </tbody></table>` : empty('💸','No transactions yet')}
+        </div>
+      </div>
+      <div>
+        <div class="section-header">
+          <div class="section-title"><div class="title-bar"></div>PENDING LOANS</div>
+        </div>
+        <div class="panel" style="padding:20px">
+          ${pending.length ? `
+            ${pending.map(l=>`
+              <div class="info-row">
+                <div>
+                  <div style="color:var(--white);font-family:'Rajdhani';font-weight:600;letter-spacing:0.05em">${l.friendName}</div>
+                  <div class="muted">${l.date}</div>
+                </div>
+                <span class="a-yel">${fmt(l.amount)}</span>
+              </div>
+            `).join('')}
+            <div class="divider"></div>
+            <div class="info-row"><span class="info-key">Total Pending</span><span class="a-yel">${fmt(lout)}</span></div>
+            <div class="info-row"><span class="info-key">Total Recovered</span><span class="a-pos">${fmt(lrec)}</span></div>
+          ` : empty('🤝','All loans settled')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   INCOME
+═══════════════════════════════════════════════ */
+function renderIncome() {
+  const data = CACHE.transactions.filter(t=>t.type==='income').sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('panel-income').innerHTML = `
+    <div class="section-header">
+      <div class="section-title"><div class="title-bar"></div>INCOME RECORDS</div>
+      <button class="btn btn-primary btn-sm" onclick="openTxnModal('income')">[ + ADD INCOME ]</button>
+    </div>
+    <div class="panel table-wrap">
+      ${data.length ? `<table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Note</th><th></th></tr></thead><tbody>
+        ${data.map(t=>`<tr>
+          <td class="muted">${t.date}</td>
+          <td>${t.description}</td>
+          <td><span class="badge b-cyan">${t.category||'—'}</span></td>
+          <td class="a-pos">+${fmt(t.amount)}</td>
+          <td class="muted">${t.note||'—'}</td>
+          <td><button class="btn btn-mag btn-xs" onclick="delTxn('${t._id}')">DEL</button></td>
+        </tr>`).join('')}
+      </tbody></table>` : empty('💰','No income recorded yet')}
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   EXPENSES
+═══════════════════════════════════════════════ */
+function renderExpenses() {
+  const data = CACHE.transactions.filter(t=>t.type==='expense').sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('panel-expenses').innerHTML = `
+    <div class="section-header">
+      <div class="section-title"><div class="title-bar"></div>EXPENSE RECORDS</div>
+      <button class="btn btn-mag btn-sm" onclick="openTxnModal('expense')">[ + ADD EXPENSE ]</button>
+    </div>
+    <div class="panel accent-mag table-wrap">
+      ${data.length ? `<table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th>Note</th><th></th></tr></thead><tbody>
+        ${data.map(t=>`<tr>
+          <td class="muted">${t.date}</td>
+          <td>${t.description}</td>
+          <td><span class="badge b-orange">${t.category||'—'}</span></td>
+          <td class="a-neg">-${fmt(t.amount)}</td>
+          <td class="muted">${t.note||'—'}</td>
+          <td><button class="btn btn-mag btn-xs" onclick="delTxn('${t._id}')">DEL</button></td>
+        </tr>`).join('')}
+      </tbody></table>` : empty('🧾','No expenses recorded yet')}
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   LOANS GIVEN
+═══════════════════════════════════════════════ */
+function renderLoansGiven() {
+  const data = [...CACHE.loans_given].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  document.getElementById('panel-loans-given').innerHTML = `
+    <div class="section-header">
+      <div class="section-title"><div class="title-bar"></div>LOANS GIVEN TO FRIENDS</div>
+      <button class="btn btn-primary btn-sm" onclick="openLoanModal()">[ + RECORD LOAN ]</button>
+    </div>
+    <div class="panel table-wrap">
+      ${data.length ? `<table><thead><tr><th>Date</th><th>Friend</th><th>Amount</th><th>Purpose</th><th>Status</th><th>Returned On</th><th>Actions</th></tr></thead><tbody>
+        ${data.map(l=>`<tr>
+          <td class="muted">${l.date}</td>
+          <td style="font-family:'Rajdhani';font-weight:600;font-size:0.9rem;letter-spacing:0.05em">${l.friendName}</td>
+          <td class="a-yel">${fmt(l.amount)}</td>
+          <td class="muted">${l.purpose||'—'}</td>
+          <td><span class="badge ${l.returned?'b-green':'b-mag'}">${l.returned?'RETURNED':'PENDING'}</span></td>
+          <td class="muted">${l.returnedOn||'—'}</td>
+          <td style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+            ${!l.returned?`<button class="btn btn-green btn-xs" onclick="markReturned('${l._id}')">✓ RETURNED</button>`:''}
+            <button class="btn btn-mag btn-xs" onclick="delLoan('${l._id}')">DEL</button>
+          </td>
+        </tr>`).join('')}
+      </tbody></table>` : empty('🤝','No loans given yet')}
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   BANK LOANS
+═══════════════════════════════════════════════ */
+function renderBankLoans() {
+  const data = [...CACHE.bank_loans].sort((a,b)=>new Date(b.startDate)-new Date(a.startDate));
+  document.getElementById('panel-bank-loans').innerHTML = `
+    <div class="section-header">
+      <div class="section-title"><div class="title-bar"></div>BANK LOANS & BORROWINGS</div>
+      <button class="btn btn-primary btn-sm" onclick="openBankLoanModal()">[ + ADD LOAN ]</button>
+    </div>
+    <div class="panel accent-yellow table-wrap">
+      ${data.length ? `<table><thead><tr><th>Start Date</th><th>Bank / Lender</th><th>Principal</th><th>Rate</th><th>EMI/month</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>
+        ${data.map(l=>`<tr>
+          <td class="muted">${l.startDate}</td>
+          <td style="font-family:'Rajdhani';font-weight:600;font-size:0.9rem;letter-spacing:0.05em">${l.bankName}</td>
+          <td class="a-neg">${fmt(l.principal)}</td>
+          <td><span class="badge b-yellow">${l.interestRate}% p.a.</span></td>
+          <td class="a-yel">${fmt(l.emi)}</td>
+          <td class="muted">${l.loanType||'—'}</td>
+          <td><span class="badge ${l.active?'b-orange':'b-green'}">${l.active?'ACTIVE':'CLOSED'}</span></td>
+          <td style="display:flex;gap:6px;align-items:center">
+            ${l.active?`<button class="btn btn-green btn-xs" onclick="closeBankLoan('${l._id}')">CLOSE</button>`:''}
+            <button class="btn btn-mag btn-xs" onclick="delBankLoan('${l._id}')">DEL</button>
+          </td>
+        </tr>`).join('')}
+      </tbody></table>` : empty('🏦','No bank loans recorded')}
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   INTEREST PAYMENTS
+═══════════════════════════════════════════════ */
+function renderInterest() {
+  const data  = [...CACHE.interest_payments].sort((a,b)=>new Date(b.date)-new Date(a.date));
+  const banks = CACHE.bank_loans;
+  const total = data.reduce((s,p)=>s+p.amount,0);
+  document.getElementById('panel-interest').innerHTML = `
+    <div class="section-header">
+      <div class="section-title"><div class="title-bar"></div>INTEREST PAYMENTS</div>
+      <button class="btn btn-primary btn-sm" onclick="openInterestModal()">[ + RECORD PAYMENT ]</button>
+    </div>
+    <div class="stats-grid" style="margin-bottom:16px">
+      <div class="panel stat-card">
+        <div class="stripe" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,var(--pink),var(--violet))"></div>
+        <div class="stat-label">TOTAL INTEREST PAID</div>
+        <div class="stat-val c-pink">${fmt(total)}</div>
+      </div>
+      <div class="panel stat-card">
+        <div class="stripe" style="position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:2px;background:linear-gradient(180deg,var(--blue),var(--violet))"></div>
+        <div class="stat-label">PAYMENT COUNT</div>
+        <div class="stat-val c-blue">${data.length}</div>
+      </div>
+    </div>
+    <div class="panel table-wrap">
+      ${data.length ? `<table><thead><tr><th>Date</th><th>Bank / Loan</th><th>Amount</th><th>Type</th><th>Note</th><th></th></tr></thead><tbody>
+        ${data.map(p=>{
+          const loan = banks.find(b=>b._id===p.loanId);
+          return `<tr>
+            <td class="muted">${p.date}</td>
+            <td style="font-weight:600">${loan?loan.bankName:'—'}</td>
+            <td class="a-mag">${fmt(p.amount)}</td>
+            <td><span class="badge b-yellow">${p.paymentType||'Interest'}</span></td>
+            <td class="muted">${p.note||'—'}</td>
+            <td><button class="btn btn-mag btn-xs" onclick="delInterest('${p._id}')">DEL</button></td>
+          </tr>`;
+        }).join('')}
+      </tbody></table>` : empty('🏦','No interest payments recorded')}
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   USERS (ADMIN)
+═══════════════════════════════════════════════ */
+function renderUsers() {
+  if (CU.role !== 'admin') return;
+  const users = CACHE.users;
+  document.getElementById('panel-users').innerHTML = `
+    <div class="section-header">
+      <div class="section-title"><div class="title-bar"></div>USER MANAGEMENT</div>
+      <button class="btn btn-primary btn-sm" onclick="openUserModal()">[ + REGISTER USER ]</button>
+    </div>
+    <div class="panel table-wrap">
+      <table><thead><tr><th>Username</th><th>Full Name</th><th>Role</th><th>Actions</th></tr></thead><tbody>
+        ${users.map(u=>`<tr>
+          <td><code style="color:var(--blue);font-size:0.8rem">${u.username}</code></td>
+          <td style="font-weight:600">${u.name}</td>
+          <td><span class="badge ${u.role==='admin'?'b-yellow':'b-cyan'}">${u.role.toUpperCase()}</span></td>
+          <td>${u.username!==CU.username?`<button class="btn btn-mag btn-xs" onclick="delUser('${u.username}')">REMOVE</button>`:`<span class="muted">you</span>`}</td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════
+   MODALS
+═══════════════════════════════════════════════ */
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalBg(e) { if (e.target===document.getElementById('modal-overlay')) closeModal(); }
+
+function openTxnModal(type) {
+  const cats = type==='income'
+    ? ['Salary','Freelance','Business','Investment','Rental','Gift','Other']
+    : ['Food','Rent','Transport','Shopping','Bills','Medical','Entertainment','Education','Other'];
+  openModal(`
+    <div class="modal-title">${type==='income'?'// ADD INCOME':'// ADD EXPENSE'}</div>
+    <div class="field"><label>// Date</label><input type="date" id="m-date" value="${today()}"></div>
+    <div class="field"><label>// Description</label><input type="text" id="m-desc" placeholder="e.g. Monthly salary"></div>
+    <div class="two-col">
+      <div class="field"><label>// Amount (₹)</label><input type="number" id="m-amt" placeholder="0.00" min="0" step="0.01"></div>
+      <div class="field"><label>// Category</label><select id="m-cat">${cats.map(c=>`<option>${c}</option>`).join('')}</select></div>
+    </div>
+    <div class="field"><label>// Note (optional)</label><textarea id="m-note" placeholder="Additional notes..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>
+      <button class="btn btn-primary" onclick="saveTxn('${type}')">[ SAVE ]</button>
+    </div>
+  `);
+}
+
+async function saveTxn(type) {
+  const date=v('m-date'), desc=v('m-desc').trim(), amt=parseFloat(v('m-amt')), cat=v('m-cat'), note=v('m-note').trim();
+  if (!date||!desc||!amt||amt<=0) { toast('FILL ALL REQUIRED FIELDS','err'); return; }
+  try {
+    const doc = await api('POST','/transactions',{type,date,description:desc,amount:amt,category:cat,note});
+    CACHE.transactions.unshift(doc);
+    closeModal(); toast(type==='income'?'INCOME ADDED ✓':'EXPENSE ADDED ✓','ok');
+    updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function delTxn(id) {
+  if (!confirm('Delete this transaction?')) return;
+  try {
+    await api('DELETE','/transactions/'+id);
+    CACHE.transactions = CACHE.transactions.filter(t=>t._id!==id);
+    toast('DELETED','err'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+function openLoanModal() {
+  openModal(`
+    <div class="modal-title">// RECORD LOAN TO FRIEND</div>
+    <div class="two-col">
+      <div class="field"><label>// Friend's Name</label><input type="text" id="m-fname" placeholder="Name"></div>
+      <div class="field"><label>// Date</label><input type="date" id="m-date" value="${today()}"></div>
+    </div>
+    <div class="field"><label>// Amount (₹)</label><input type="number" id="m-amt" placeholder="0.00" min="0" step="0.01"></div>
+    <div class="field"><label>// Purpose</label><input type="text" id="m-purpose" placeholder="Reason for loan"></div>
+    <div class="field"><label>// Note</label><textarea id="m-note" placeholder="Additional details..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>
+      <button class="btn btn-primary" onclick="saveLoan()">[ SAVE LOAN ]</button>
+    </div>
+  `);
+}
+
+async function saveLoan() {
+  const friendName=v('m-fname').trim(), date=v('m-date'), amount=parseFloat(v('m-amt')), purpose=v('m-purpose').trim(), note=v('m-note').trim();
+  if (!friendName||!date||!amount||amount<=0) { toast('FILL ALL REQUIRED FIELDS','err'); return; }
+  try {
+    const doc = await api('POST','/loans-given',{friendName,date,amount,purpose,note});
+    CACHE.loans_given.unshift(doc);
+    closeModal(); toast('LOAN RECORDED ✓','ok'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function markReturned(id) {
+  try {
+    const doc = await api('PATCH','/loans-given/'+id+'/return');
+    const idx = CACHE.loans_given.findIndex(l=>l._id===id);
+    if (idx>-1) CACHE.loans_given[idx] = doc;
+    toast('MARKED AS RETURNED ✓','ok'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function delLoan(id) {
+  if (!confirm('Delete this loan?')) return;
+  try {
+    await api('DELETE','/loans-given/'+id);
+    CACHE.loans_given = CACHE.loans_given.filter(l=>l._id!==id);
+    toast('DELETED','err'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+function openBankLoanModal() {
+  openModal(`
+    <div class="modal-title">// ADD BANK LOAN</div>
+    <div class="two-col">
+      <div class="field"><label>// Bank / Lender</label><input type="text" id="m-bank" placeholder="SBI, HDFC, etc."></div>
+      <div class="field"><label>// Start Date</label><input type="date" id="m-date" value="${today()}"></div>
+    </div>
+    <div class="two-col">
+      <div class="field"><label>// Principal Amount (₹)</label><input type="number" id="m-principal" placeholder="0.00" min="0"></div>
+      <div class="field"><label>// Interest Rate (% p.a.)</label><input type="number" id="m-rate" placeholder="8.5" step="0.01" min="0"></div>
+    </div>
+    <div class="two-col">
+      <div class="field"><label>// Monthly EMI (₹)</label><input type="number" id="m-emi" placeholder="0.00" min="0"></div>
+      <div class="field"><label>// Loan Type</label>
+        <select id="m-ltype"><option>Home Loan</option><option>Personal Loan</option><option>Car Loan</option><option>Education Loan</option><option>Business Loan</option><option>Other</option></select>
+      </div>
+    </div>
+    <div class="field"><label>// Note</label><textarea id="m-note" placeholder="Purpose, bank branch, etc."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>
+      <button class="btn btn-primary" onclick="saveBankLoan()">[ SAVE ]</button>
+    </div>
+  `);
+}
+
+async function saveBankLoan() {
+  const bankName=v('m-bank').trim(), startDate=v('m-date'), principal=parseFloat(v('m-principal')), interestRate=parseFloat(v('m-rate')), emi=parseFloat(v('m-emi'))||0, loanType=v('m-ltype'), note=v('m-note').trim();
+  if (!bankName||!startDate||!principal||!interestRate) { toast('FILL ALL REQUIRED FIELDS','err'); return; }
+  try {
+    const doc = await api('POST','/bank-loans',{bankName,startDate,principal,interestRate,emi,loanType,note});
+    CACHE.bank_loans.unshift(doc);
+    closeModal(); toast('BANK LOAN ADDED ✓','ok'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function closeBankLoan(id) {
+  try {
+    const doc = await api('PATCH','/bank-loans/'+id+'/close');
+    const idx = CACHE.bank_loans.findIndex(l=>l._id===id);
+    if (idx>-1) CACHE.bank_loans[idx] = doc;
+    toast('LOAN CLOSED ✓','ok'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function delBankLoan(id) {
+  if (!confirm('Delete this loan?')) return;
+  try {
+    await api('DELETE','/bank-loans/'+id);
+    CACHE.bank_loans = CACHE.bank_loans.filter(l=>l._id!==id);
+    toast('DELETED','err'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+function openInterestModal() {
+  const activeLoans = CACHE.bank_loans.filter(l=>l.active);
+  openModal(`
+    <div class="modal-title">// RECORD INTEREST PAYMENT</div>
+    <div class="field"><label>// Bank Loan</label>
+      <select id="m-loan">
+        ${activeLoans.length ? activeLoans.map(l=>`<option value="${l._id}">${l.bankName} — ${fmt(l.principal)}</option>`).join('') : '<option value="">No active loans</option>'}
+      </select>
+    </div>
+    <div class="two-col">
+      <div class="field"><label>// Date</label><input type="date" id="m-date" value="${today()}"></div>
+      <div class="field"><label>// Amount (₹)</label><input type="number" id="m-amt" placeholder="0.00" min="0" step="0.01"></div>
+    </div>
+    <div class="field"><label>// Payment Type</label>
+      <select id="m-ptype"><option>Interest Only</option><option>EMI (Principal+Interest)</option><option>Partial Principal</option><option>Full Prepayment</option></select>
+    </div>
+    <div class="field"><label>// Note</label><textarea id="m-note" placeholder="Reference, month covered, etc."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>
+      <button class="btn btn-primary" onclick="saveInterest()">[ SAVE ]</button>
+    </div>
+  `);
+}
+
+async function saveInterest() {
+  const loanId=v('m-loan'), date=v('m-date'), amount=parseFloat(v('m-amt')), paymentType=v('m-ptype'), note=v('m-note').trim();
+  if (!loanId||!date||!amount||amount<=0) { toast('FILL ALL REQUIRED FIELDS','err'); return; }
+  try {
+    const doc = await api('POST','/interest-payments',{loanId,date,amount,paymentType,note});
+    CACHE.interest_payments.unshift(doc);
+    closeModal(); toast('PAYMENT RECORDED ✓','ok'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function delInterest(id) {
+  if (!confirm('Delete this payment?')) return;
+  try {
+    await api('DELETE','/interest-payments/'+id);
+    CACHE.interest_payments = CACHE.interest_payments.filter(p=>p._id!==id);
+    toast('DELETED','err'); updateTicker(); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+function openUserModal() {
+  openModal(`
+    <div class="modal-title">// REGISTER NEW USER</div>
+    <div class="two-col">
+      <div class="field"><label>// Username</label><input type="text" id="m-uname" placeholder="username or email"></div>
+      <div class="field"><label>// Full Name</label><input type="text" id="m-ufull" placeholder="Full name"></div>
+    </div>
+    <div class="field"><label>// Password</label><input type="password" id="m-upwd" placeholder="Password"></div>
+    <div class="field"><label>// Role</label><select id="m-urole"><option value="user">User</option><option value="admin">Admin</option></select></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">CANCEL</button>
+      <button class="btn btn-primary" onclick="saveUser()">[ CREATE USER ]</button>
+    </div>
+  `);
+}
+
+async function saveUser() {
+  const username=v('m-uname').trim(), name=v('m-ufull').trim(), password=v('m-upwd'), role=v('m-urole');
+  if (!username||!name||!password) { toast('ALL FIELDS REQUIRED','err'); return; }
+  try {
+    const doc = await api('POST','/users',{username,password,name,role});
+    CACHE.users.push(doc);
+    closeModal(); toast('USER CREATED ✓','ok'); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+async function delUser(username) {
+  if (!confirm(`Remove user "${username}"?`)) return;
+  try {
+    await api('DELETE','/users/'+encodeURIComponent(username));
+    CACHE.users = CACHE.users.filter(u=>u.username!==username);
+    toast('USER REMOVED','err'); switchTab(AT);
+  } catch(e) { toast(e.message,'err'); }
+}
+
+/* ═══════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════ */
+function fmt(n) { return '₹'+(n||0).toLocaleString('en-IN',{maximumFractionDigits:2}); }
+function today() { return new Date().toISOString().split('T')[0]; }
+function v(id) { return document.getElementById(id)?.value||''; }
+function show(id,msg) { const el=document.getElementById(id); if(el){el.textContent=msg;el.style.display='block';} }
+function hide(id) { const el=document.getElementById(id); if(el) el.style.display='none'; }
+function empty(icon,msg) { return `<div class="empty"><div class="empty-icon">${icon}</div><p>${msg}</p></div>`; }
+
+let toastTimer;
+function toast(msg, type='') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast '+type;
+  clearTimeout(toastTimer);
+  setTimeout(()=>el.classList.add('show'),10);
+  toastTimer = setTimeout(()=>el.classList.remove('show'),3000);
+}
+
+/* ═══════════════════════════════════════════════
+   KEYBOARD + AUTO-LOGIN FROM SAVED TOKEN
+═══════════════════════════════════════════════ */
+document.getElementById('l-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// Auto-restore session if token exists
+(async function autoLogin() {
+  if (!TOKEN) return;
+  try {
+    // Validate token by fetching transactions — if 401, token is expired
+    const txns = await api('GET','/transactions');
+    // Token is valid — decode user from it
+    const payload = JSON.parse(atob(TOKEN.split('.')[1]));
+    CU = { username: payload.username, name: payload.name, role: payload.role };
+    CACHE.transactions = txns;
+    bootApp();
+  } catch {
+    // Token expired or invalid — show login
+    TOKEN = null; localStorage.removeItem('fv_token');
+  }
+})();
+</script>
+</body>
+</html>
